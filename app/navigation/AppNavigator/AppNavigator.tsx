@@ -1,0 +1,73 @@
+import React, { useEffect, useState } from "react";
+import TabNavigator from "../TabNavigator/TabNavigator";
+import BackButton from "../TabNavigator/shared/components/BackButton/BackButton";
+import { createStackNavigator } from "@react-navigation/stack";
+import { useDispatch, useSelector } from "react-redux";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ProfileScreen from "@/app/screens/ProfileScreen/ProfileScreen";
+import { AppDispatch } from "../../store";
+
+export type RootStackParamList = {
+  Main: undefined;
+  Reservations: undefined;
+  Profile: undefined;
+};
+
+const { Navigator, Screen } = createStackNavigator<RootStackParamList>();
+
+const AppNavigator = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+
+  /*useEffect(() => {
+    const checkUserSession = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem("id_platforms_user");
+        console.log("Stored user id", storedUserId);
+        if (storedUserId !== "0" && storedUserId !== null) {
+          setIsAuthenticated(true);
+        } else {
+          console.log("Validating user session", storedUserId);
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Failed to load user session", error);
+      }
+    };
+
+    checkUserSession();
+  }, [userInfo]);*/
+
+  return (
+    <Navigator>
+      {isAuthenticated ? (
+        <>
+          <Screen
+            name="Main"
+            component={TabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={({ navigation }) => ({
+              headerTitle: "Mi Perfil",
+              headerTitleStyle: {
+                fontSize: 30,
+                fontFamily: "Kanit-Regular",
+                fontWeight: "bold",
+                color: "#000", // Customize the color
+              },
+              headerLeft: () => (
+                <BackButton onPress={() => navigation.goBack()} />
+              ),
+            })}
+          />
+        </>
+      ) : null}
+    </Navigator>
+  );
+};
+
+export default AppNavigator;
