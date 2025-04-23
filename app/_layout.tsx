@@ -13,6 +13,8 @@ import { clearState } from "./store/appSlice";
 import LoadingMask from "./components/LoadingMask/LoadingMask";
 import RetryModal from "./components/RetryModal/RetryModal";
 import { StatusBar } from "expo-status-bar";
+import "./i18n";
+import { useTranslation } from "react-i18next";
 
 export default function RootLayout() {
   return (
@@ -32,6 +34,7 @@ function InnerRootLayout() {
   const [retryModalVisible, setRetryModalVisible] = useState(false);
   const [retryMessage, setRetryMessage] = useState("");
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { t } = useTranslation(); // Use the translation hook
 
   const handleRetry = () => {
     console.log("Retrying...");
@@ -62,10 +65,10 @@ function InnerRootLayout() {
 
   useEffect(() => {
     if (isError) {
-      setRetryMessage("Parece que no tienes conexión a internet");
+      setRetryMessage(t("noInternet")); // Use translation for the error message
       setRetryModalVisible(true);
     }
-  }, [isError]);
+  }, [isError, t]);
 
   return (
     <>

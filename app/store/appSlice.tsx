@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppState } from "@/app/app.model";
+import { AppState } from "../app.model";
 
 const initialState: AppState = {
   isLoading: false,
