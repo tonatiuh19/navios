@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { MapScreenStyles } from "./MapScreen.style";
 import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import ButtonsControls from "./ZoomControls/ButtonsControls";
 
 const locations = [
   {
@@ -56,6 +57,8 @@ const MapScreen: React.FC = () => {
     longitudeDelta: 0.0221,
   });
 
+  const [filteredLocations, setFilteredLocations] = useState(locations);
+
   useEffect(() => {
     // Automatically adjust the map to fit all markers
     if (mapRef.current) {
@@ -103,10 +106,20 @@ const MapScreen: React.FC = () => {
     }
   };
 
+  const handleFilterChange = (filter: string) => {
+    if (filter === "all") {
+      setFilteredLocations(locations);
+    } else {
+      setFilteredLocations(
+        locations.filter((location) => location.type === filter)
+      );
+    }
+  };
+
   return (
     <View style={MapScreenStyles.container}>
       <MapView ref={mapRef} style={MapScreenStyles.map} initialRegion={region}>
-        {locations.map((location) => (
+        {filteredLocations.map((location) => (
           <Marker
             key={location.id}
             coordinate={{
@@ -120,14 +133,11 @@ const MapScreen: React.FC = () => {
           </Marker>
         ))}
       </MapView>
-      <View style={MapScreenStyles.zoomControls}>
-        <TouchableOpacity style={MapScreenStyles.zoomButton} onPress={zoomIn}>
-          <Text style={MapScreenStyles.zoomText}>+</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={MapScreenStyles.zoomButton} onPress={zoomOut}>
-          <Text style={MapScreenStyles.zoomText}>-</Text>
-        </TouchableOpacity>
-      </View>
+      <ButtonsControls
+        onZoomIn={zoomIn}
+        onZoomOut={zoomOut}
+        onFilterChange={handleFilterChange}
+      />
     </View>
   );
 };
