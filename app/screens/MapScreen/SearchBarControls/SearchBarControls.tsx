@@ -57,7 +57,6 @@ const SearchBarControls: React.FC<SearchBarControlsProps> = ({
           />
           <TextInput
             style={SearchBarControlsStyles.searchBar}
-            placeholder={t("search_placeholder")}
             placeholderTextColor="#fff"
             value={searchQuery}
             onChangeText={onSearchChange}

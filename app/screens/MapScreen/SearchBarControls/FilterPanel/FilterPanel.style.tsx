@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const FilterPanelStyles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#0A2463",
     borderRadius: 8,
     padding: 20,
     shadowColor: "#000",
@@ -12,19 +12,21 @@ export const FilterPanelStyles = StyleSheet.create({
     elevation: 5,
   },
   title: {
+    color: "#f29b7c",
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 16,
+    color: "#f29b7c",
     fontWeight: "bold",
     marginTop: 10,
     marginBottom: 10,
   },
   filterOptions: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     marginBottom: 20,
   },
   filterOption: {
@@ -51,6 +53,7 @@ export const FilterPanelStyles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     fontSize: 14,
+    color: "#f29b7c",
   },
   buttonsRow: {
     flexDirection: "row",

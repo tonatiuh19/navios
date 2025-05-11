@@ -48,8 +48,9 @@ export const SearchBarControlsStyles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: "transparent", // Semi-transparent background
-    top: 90,
-    alignItems: "center",
+    top: 88,
+    flexDirection: "row",
+    //alignItems: "center",
   },
   modalContent: {
     width: "90%",
