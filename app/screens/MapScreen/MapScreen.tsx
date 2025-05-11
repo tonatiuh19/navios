@@ -12,6 +12,7 @@ import { MapScreenStyles } from "./MapScreen.style";
 import ButtonsControls from "./ZoomControls/ButtonsControls";
 import ReservationButton from "./ReservationButton/ReservationButton";
 import { useTranslation } from "react-i18next";
+import LocationDetailsModal from "./LocationDetailsModal/LocationDetailsModal";
 
 const locations = [
   {
@@ -22,6 +23,7 @@ const locations = [
     description: "This is an industrial/commercial boat port",
     type: "industrial",
     price: "$500",
+    rating: 4.7, // Add rating
   },
   {
     id: 2,
@@ -31,6 +33,7 @@ const locations = [
     description: "This is a touristic boat",
     type: "touristic",
     price: "$300",
+    rating: 4.0,
   },
   {
     id: 3,
@@ -40,6 +43,7 @@ const locations = [
     description: "This is another boat",
     type: "touristic",
     price: "$400",
+    rating: 3.5,
   },
   {
     id: 4,
@@ -49,6 +53,7 @@ const locations = [
     description: "This is another boat",
     type: "industrial",
     price: "$600",
+    rating: 5.0,
   },
   {
     id: 5,
@@ -58,6 +63,7 @@ const locations = [
     description: "This is another boat",
     type: "touristic",
     price: "$350",
+    rating: 3.0,
   },
 ];
 
@@ -80,6 +86,7 @@ const MapScreen: React.FC = () => {
     description: string;
     type: string;
     price: string;
+    rating: number;
   } | null>(null); // Track the selected marker
   const [previousRegion, setPreviousRegion] = useState(region);
 
@@ -156,7 +163,7 @@ const MapScreen: React.FC = () => {
     setSelectedLocation(null); // Clear the selected marker
 
     if (mapRef.current) {
-      mapRef.current.animateToRegion(previousRegion, 500);
+      mapRef.current.animateToRegion(previousRegion, 500); // Reset the map region
     }
   };
 
@@ -171,7 +178,7 @@ const MapScreen: React.FC = () => {
           .filter(
             (location) =>
               !selectedLocation || location.id === selectedLocation.id
-          )
+          ) // Show all markers if no marker is selected
           .map((location) => (
             <Marker
               key={location.id}
@@ -201,7 +208,6 @@ const MapScreen: React.FC = () => {
           ))}
       </MapView>
 
-      {/* Sliding Panel Modal */}
       <Modal
         visible={!!selectedLocation}
         transparent={true}
@@ -209,29 +215,13 @@ const MapScreen: React.FC = () => {
         onRequestClose={closePopup}
       >
         <View style={MapScreenStyles.modalContainer}>
-          <View style={MapScreenStyles.modalContent}>
-            {selectedLocation && (
-              <>
-                <Text style={MapScreenStyles.popupTitle}>
-                  {selectedLocation.title}
-                </Text>
-                <Text style={MapScreenStyles.popupDescription}>
-                  {selectedLocation.description}
-                </Text>
-                <Text style={MapScreenStyles.popupPrice}>
-                  {t("price")}: {selectedLocation.price}
-                </Text>
-                <ReservationButton
-                  title={t("reserve")}
-                  price={selectedLocation.price}
-                  onPress={() => handleReservation(selectedLocation.title)}
-                />
-                <TouchableOpacity onPress={closePopup}>
-                  <Text style={MapScreenStyles.popupClose}>{t("close")}</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
+          {selectedLocation && (
+            <LocationDetailsModal
+              selectedLocation={selectedLocation}
+              onClose={closePopup}
+              onReserve={handleReservation}
+            />
+          )}
         </View>
       </Modal>
 
