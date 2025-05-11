@@ -9,5 +9,13 @@
   "price": "Price",
   "description": "Description",
   "zoomIn": "Zoom In",
-  "zoomOut": "Zoom Out"
+  "zoomOut": "Zoom Out",
+  "search_placeholder": "Search",
+  "filter_by_type": "Type",
+  "industrial": "Industrial",
+  "touristic": "Touristic",
+  "all": "All",
+  "filter_by_rating": "Rating",
+  "stars": "Stars",
+  "apply_filters": "Apply Filters"
 }

@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { MapScreenStyles } from "./MapScreen.style";
@@ -13,6 +15,7 @@ import ButtonsControls from "./ZoomControls/ButtonsControls";
 import ReservationButton from "./ReservationButton/ReservationButton";
 import { useTranslation } from "react-i18next";
 import LocationDetailsModal from "./LocationDetailsModal/LocationDetailsModal";
+import SearchBarControls from "./SearchBarControls/SearchBarControls";
 
 const locations = [
   {
@@ -89,6 +92,9 @@ const MapScreen: React.FC = () => {
     rating: number;
   } | null>(null); // Track the selected marker
   const [previousRegion, setPreviousRegion] = useState(region);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedRating, setSelectedRating] = useState(0);
 
   useEffect(() => {
     if (mapRef.current) {
@@ -155,6 +161,39 @@ const MapScreen: React.FC = () => {
     }
   };
 
+  const applyFilters = () => {
+    let filtered = locations;
+
+    if (selectedFilter) {
+      filtered = filtered.filter(
+        (location) => location.type === selectedFilter
+      );
+    }
+
+    if (selectedRating > 0) {
+      filtered = filtered.filter(
+        (location) => location.rating >= selectedRating
+      );
+    }
+
+    setFilteredLocations(filtered);
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim() === "") {
+      // If the search bar is empty, reset to all locations
+      setFilteredLocations(locations);
+    } else {
+      // Filter locations based on the search query
+      setFilteredLocations(
+        locations.filter((location) =>
+          location.title.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    }
+  };
+
   const handleMarkerPress = (location: any) => {
     setSelectedLocation(location); // Set the selected marker
   };
@@ -171,74 +210,91 @@ const MapScreen: React.FC = () => {
     alert(`${t("reserve")} ${locationTitle}`);
   };
 
+  const resetSearchAndFilters = () => {
+    setSearchQuery("");
+    setSelectedFilter("");
+    setSelectedRating(0);
+    setFilteredLocations(locations);
+    Keyboard.dismiss(); // Dismiss the keyboard
+  };
+
   return (
-    <View style={MapScreenStyles.container}>
-      <MapView ref={mapRef} style={MapScreenStyles.map} initialRegion={region}>
-        {filteredLocations
-          .filter(
-            (location) =>
-              !selectedLocation || location.id === selectedLocation.id
-          ) // Show all markers if no marker is selected
-          .map((location) => (
-            <Marker
-              key={location.id}
-              coordinate={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-              }}
-              onPress={() => handleMarkerPress(location)} // Handle marker press
-            >
-              <View style={MapScreenStyles.priceLabelContainer}>
-                <Text style={MapScreenStyles.priceLabelText}>
-                  {location.price}
-                </Text>
-                <View style={MapScreenStyles.priceLabelTriangle} />
-              </View>
-              <View style={MapScreenStyles.markerIconContainer}>
-                <Image
-                  source={getMarkerIcon(location.type)}
-                  style={[
-                    MapScreenStyles.markerIcon,
-                    selectedLocation?.id === location.id &&
-                      MapScreenStyles.selectedMarkerIcon, // Apply additional styles if selected
-                  ]}
+    <TouchableWithoutFeedback onPress={resetSearchAndFilters}>
+      <View style={MapScreenStyles.container}>
+        <SearchBarControls
+          searchQuery={searchQuery}
+          onSearchChange={handleSearch}
+          selectedFilter={selectedFilter}
+          onFilterChange={(filter) => {
+            setSelectedFilter(filter);
+            applyFilters();
+          }}
+          selectedRating={selectedRating}
+          onRatingChange={(rating) => {
+            setSelectedRating(rating);
+            applyFilters();
+          }}
+          onApplyFilters={applyFilters}
+        />
+        <MapView
+          ref={mapRef}
+          style={MapScreenStyles.map}
+          initialRegion={region}
+        >
+          {filteredLocations
+            .filter(
+              (location) =>
+                !selectedLocation || location.id === selectedLocation.id
+            ) // Show all markers if no marker is selected
+            .map((location) => (
+              <Marker
+                key={location.id}
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                onPress={() => handleMarkerPress(location)} // Handle marker press
+              >
+                <View style={MapScreenStyles.priceLabelContainer}>
+                  <Text style={MapScreenStyles.priceLabelText}>
+                    {location.price}
+                  </Text>
+                  <View style={MapScreenStyles.priceLabelTriangle} />
+                </View>
+                <View style={MapScreenStyles.markerIconContainer}>
+                  <Image
+                    source={getMarkerIcon(location.type)}
+                    style={[
+                      MapScreenStyles.markerIcon,
+                      selectedLocation?.id === location.id &&
+                        MapScreenStyles.selectedMarkerIcon, // Apply additional styles if selected
+                    ]}
+                  />
+                </View>
+              </Marker>
+            ))}
+        </MapView>
+
+        <Modal
+          visible={!!selectedLocation}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={closePopup}
+        >
+          <TouchableWithoutFeedback onPress={closePopup}>
+            <View style={MapScreenStyles.modalContainer}>
+              {selectedLocation && (
+                <LocationDetailsModal
+                  selectedLocation={selectedLocation}
+                  onClose={closePopup}
+                  onReserve={handleReservation}
                 />
-              </View>
-            </Marker>
-          ))}
-      </MapView>
-
-      <Modal
-        visible={!!selectedLocation}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={closePopup}
-      >
-        <View style={MapScreenStyles.modalContainer}>
-          {selectedLocation && (
-            <LocationDetailsModal
-              selectedLocation={selectedLocation}
-              onClose={closePopup}
-              onReserve={handleReservation}
-            />
-          )}
-        </View>
-      </Modal>
-
-      <ButtonsControls
-        onZoomIn={zoomIn}
-        onZoomOut={zoomOut}
-        onFilterChange={(filter) => {
-          if (filter === "all") {
-            setFilteredLocations(locations);
-          } else {
-            setFilteredLocations(
-              locations.filter((location) => location.type === filter)
-            );
-          }
-        }}
-      />
-    </View>
+              )}
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

@@ -1,13 +1,21 @@
 {
-  "noInternet": "Parece que no tienes conexión a internet",
+  "noInternet": "Parece que no estás conectado a internet",
   "retry": "Reintentar",
   "loading": "Cargando...",
   "welcome": "Bienvenido",
   "map": "Mapa",
-  "reservations": "Reservaciones",
+  "reservations": "Reservas",
   "reserve": "Reservar",
   "price": "Precio",
   "description": "Descripción",
   "zoomIn": "Acercar",
-  "zoomOut": "Alejar"
+  "zoomOut": "Alejar",
+  "search_placeholder": "Buscar",
+  "filter_by_type": "Filtrar por tipo",
+  "industrial": "Industrial",
+  "touristic": "Turístico",
+  "all": "Todos",
+  "filter_by_rating": "Filtrar por calificación",
+  "stars": "Estrellas",
+  "apply_filters": "Aplicar filtros"
 }
