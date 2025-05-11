@@ -4,5 +4,10 @@
   "loading": "Loading...",
   "welcome": "Welcome",
   "map": "Map",
-  "reservations": "Reservations"
+  "reservations": "Reservations",
+  "reserve": "Reserve",
+  "price": "Price",
+  "description": "Description",
+  "zoomIn": "Zoom In",
+  "zoomOut": "Zoom Out"
 }

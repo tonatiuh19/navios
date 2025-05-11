@@ -4,5 +4,10 @@
   "loading": "Cargando...",
   "welcome": "Bienvenido",
   "map": "Mapa",
-  "reservations": "Reservaciones"
+  "reservations": "Reservaciones",
+  "reserve": "Reservar",
+  "price": "Precio",
+  "description": "Descripción",
+  "zoomIn": "Acercar",
+  "zoomOut": "Alejar"
 }

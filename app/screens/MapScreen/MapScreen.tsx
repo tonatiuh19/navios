@@ -1,9 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Dimensions,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { MapScreenStyles } from "./MapScreen.style";
-import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import ButtonsControls from "./ZoomControls/ButtonsControls";
+import ReservationButton from "./ReservationButton/ReservationButton";
+import { useTranslation } from "react-i18next";
 
 const locations = [
   {
@@ -13,6 +21,7 @@ const locations = [
     title: "Industrial Boat",
     description: "This is an industrial/commercial boat port",
     type: "industrial",
+    price: "$500",
   },
   {
     id: 2,
@@ -21,6 +30,7 @@ const locations = [
     title: "Touristic Boat",
     description: "This is a touristic boat",
     type: "touristic",
+    price: "$300",
   },
   {
     id: 3,
@@ -29,6 +39,7 @@ const locations = [
     title: "Another Boat",
     description: "This is another boat",
     type: "touristic",
+    price: "$400",
   },
   {
     id: 4,
@@ -37,6 +48,7 @@ const locations = [
     title: "Another Boat",
     description: "This is another boat",
     type: "industrial",
+    price: "$600",
   },
   {
     id: 5,
@@ -45,10 +57,12 @@ const locations = [
     title: "Another Boat",
     description: "This is another boat",
     type: "touristic",
+    price: "$350",
   },
 ];
 
 const MapScreen: React.FC = () => {
+  const { t } = useTranslation();
   const mapRef = useRef<MapView>(null);
   const [region, setRegion] = useState({
     latitude: 25.58627632413783,
@@ -58,9 +72,18 @@ const MapScreen: React.FC = () => {
   });
 
   const [filteredLocations, setFilteredLocations] = useState(locations);
+  const [selectedLocation, setSelectedLocation] = useState<{
+    id: number;
+    latitude: number;
+    longitude: number;
+    title: string;
+    description: string;
+    type: string;
+    price: string;
+  } | null>(null); // Track the selected marker
+  const [previousRegion, setPreviousRegion] = useState(region);
 
   useEffect(() => {
-    // Automatically adjust the map to fit all markers
     if (mapRef.current) {
       mapRef.current.fitToCoordinates(
         locations.map((location) => ({
@@ -68,12 +91,31 @@ const MapScreen: React.FC = () => {
           longitude: location.longitude,
         })),
         {
-          edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, // Add padding around the markers
-          animated: true, // Smooth animation
+          edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+          animated: true,
         }
       );
     }
   }, []);
+
+  useEffect(() => {
+    if (selectedLocation && mapRef.current) {
+      setPreviousRegion(region);
+      // Calculate the offset latitude to move the marker closer to the top
+      const panelHeight = Dimensions.get("window").height / 2;
+      const latitudeOffset =
+        (region.latitudeDelta * (panelHeight - 500)) /
+        Dimensions.get("window").height; // Add extra offset for higher positioning
+
+      const newRegion = {
+        ...region,
+        latitude: selectedLocation.latitude + latitudeOffset,
+        longitude: selectedLocation.longitude,
+      };
+
+      mapRef.current.animateToRegion(newRegion, 500);
+    }
+  }, [selectedLocation]);
 
   const zoomIn = () => {
     const newRegion = {
@@ -82,7 +124,7 @@ const MapScreen: React.FC = () => {
       longitudeDelta: region.longitudeDelta / 2,
     };
     setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 500); // Smooth animation
+    mapRef.current?.animateToRegion(newRegion, 500);
   };
 
   const zoomOut = () => {
@@ -92,51 +134,119 @@ const MapScreen: React.FC = () => {
       longitudeDelta: region.longitudeDelta * 2,
     };
     setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 500); // Smooth animation
+    mapRef.current?.animateToRegion(newRegion, 500);
   };
 
   const getMarkerIcon = (type: string) => {
     switch (type) {
       case "industrial":
-        return <FontAwesome5 name="ship" size={24} color="#FF6347" />;
+        return require("../../../assets/icons/industrial.png");
       case "touristic":
-        return <FontAwesome6 name="sailboat" size={24} color="#1E90FF" />;
+        return require("../../../assets/icons/touristic.png");
       default:
-        return <FontAwesome5 name="map-marker-alt" size={24} color="#000" />;
+        return require("../../../assets/icons/touristic.png");
     }
   };
 
-  const handleFilterChange = (filter: string) => {
-    if (filter === "all") {
-      setFilteredLocations(locations);
-    } else {
-      setFilteredLocations(
-        locations.filter((location) => location.type === filter)
-      );
+  const handleMarkerPress = (location: any) => {
+    setSelectedLocation(location); // Set the selected marker
+  };
+
+  const closePopup = () => {
+    setSelectedLocation(null); // Clear the selected marker
+
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(previousRegion, 500);
     }
+  };
+
+  const handleReservation = (locationTitle: string) => {
+    alert(`${t("reserve")} ${locationTitle}`);
   };
 
   return (
     <View style={MapScreenStyles.container}>
       <MapView ref={mapRef} style={MapScreenStyles.map} initialRegion={region}>
-        {filteredLocations.map((location) => (
-          <Marker
-            key={location.id}
-            coordinate={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-            }}
-            title={location.title}
-            description={location.description}
-          >
-            {getMarkerIcon(location.type)}
-          </Marker>
-        ))}
+        {filteredLocations
+          .filter(
+            (location) =>
+              !selectedLocation || location.id === selectedLocation.id
+          )
+          .map((location) => (
+            <Marker
+              key={location.id}
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              onPress={() => handleMarkerPress(location)} // Handle marker press
+            >
+              <View style={MapScreenStyles.priceLabelContainer}>
+                <Text style={MapScreenStyles.priceLabelText}>
+                  {location.price}
+                </Text>
+                <View style={MapScreenStyles.priceLabelTriangle} />
+              </View>
+              <View style={MapScreenStyles.markerIconContainer}>
+                <Image
+                  source={getMarkerIcon(location.type)}
+                  style={[
+                    MapScreenStyles.markerIcon,
+                    selectedLocation?.id === location.id &&
+                      MapScreenStyles.selectedMarkerIcon, // Apply additional styles if selected
+                  ]}
+                />
+              </View>
+            </Marker>
+          ))}
       </MapView>
+
+      {/* Sliding Panel Modal */}
+      <Modal
+        visible={!!selectedLocation}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={closePopup}
+      >
+        <View style={MapScreenStyles.modalContainer}>
+          <View style={MapScreenStyles.modalContent}>
+            {selectedLocation && (
+              <>
+                <Text style={MapScreenStyles.popupTitle}>
+                  {selectedLocation.title}
+                </Text>
+                <Text style={MapScreenStyles.popupDescription}>
+                  {selectedLocation.description}
+                </Text>
+                <Text style={MapScreenStyles.popupPrice}>
+                  {t("price")}: {selectedLocation.price}
+                </Text>
+                <ReservationButton
+                  title={t("reserve")}
+                  price={selectedLocation.price}
+                  onPress={() => handleReservation(selectedLocation.title)}
+                />
+                <TouchableOpacity onPress={closePopup}>
+                  <Text style={MapScreenStyles.popupClose}>{t("close")}</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+
       <ButtonsControls
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}
-        onFilterChange={handleFilterChange}
+        onFilterChange={(filter) => {
+          if (filter === "all") {
+            setFilteredLocations(locations);
+          } else {
+            setFilteredLocations(
+              locations.filter((location) => location.type === filter)
+            );
+          }
+        }}
       />
     </View>
   );
