@@ -4,6 +4,7 @@ export const DOMAIN = "https://garbrix.com/navios/api/";
 /*Store State*/
 export interface AppState {
   userInfo: UserState;
+  ports: PortsModel[];
   isLoading?: boolean;
   isError?: boolean;
 }
@@ -29,4 +30,15 @@ export interface UserInfo {
   navios_user_type: number;
   navios_user_created: string;
   navios_user_active: number;
+}
+
+export interface PortsModel {
+  navios_port_id: string;
+  navios_port_title: string;
+  navios_port_description: string;
+  navios_port_type: string;
+  navios_port_latitude: string;
+  navios_port_longitude: string;
+  navios_port_active: string;
+  navios_port_type_title: string;
 }

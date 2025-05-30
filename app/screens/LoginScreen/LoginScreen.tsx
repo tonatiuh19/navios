@@ -18,14 +18,8 @@ const LoginScreen: React.FC = () => {
   const [pickerVisible, setPickerVisible] = useState(false);
   const [userExists, setUserExists] = useState(false);
 
-  useEffect(() => {
-    //console.log("User Info", userInfo);
-  }, [userInfo]);
-
   useFocusEffect(
     useCallback(() => {
-      // Refresh logic here
-      console.log("Focused");
       setNextSection(false);
       setPickerVisible(false);
     }, [])

@@ -13,7 +13,6 @@ import { selectUserInfo } from "../../../store/selectors";
 import { useSelector } from "react-redux";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import CodeValidationForm from "../CodeValidationForm/CodeValidationForm";
-import Feather from "@expo/vector-icons/Feather";
 import { formatDate } from "@/app/utils/functions/UtilsFunctions";
 import { useTranslation } from "react-i18next";
 
@@ -30,18 +29,12 @@ const SignInForm: React.FC<any> = ({
   const [isSettingDateOfBirth, setIsSettingDateOfBirth] = useState(false);
 
   useEffect(() => {
-    console.log("isUserExist", isUserExist);
-    console.log("userInfo", userInfo);
     setUserExists(isUserExist); // Update the parent state when isUserExist changes
   }, [isUserExist, setUserExists]);
 
   const onChange = (event: any, selectedDate: any, setFieldValue: any) => {
     const currentDate = selectedDate || date;
     if (Platform.OS !== "ios") {
-      console.log(
-        "Current Date",
-        currentDate.setDate(currentDate.getDate() - 1)
-      );
       setShow(false);
     }
     setDate(currentDate);

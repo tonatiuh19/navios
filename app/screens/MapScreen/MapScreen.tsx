@@ -11,11 +11,13 @@ import {
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { MapScreenStyles } from "./MapScreen.style";
-import ButtonsControls from "./ZoomControls/ButtonsControls";
-import ReservationButton from "./ReservationButton/ReservationButton";
 import { useTranslation } from "react-i18next";
 import LocationDetailsModal from "./LocationDetailsModal/LocationDetailsModal";
 import SearchBarControls from "./SearchBarControls/SearchBarControls";
+import { useDispatch, useSelector } from "react-redux";
+import { selectPorts } from "@/app/store/selectors";
+import { getActivePorts } from "@/app/store/effects";
+import { AppDispatch } from "@/app/store";
 
 const locations = [
   {
@@ -73,6 +75,8 @@ const locations = [
 const MapScreen: React.FC = () => {
   const { t } = useTranslation();
   const mapRef = useRef<MapView>(null);
+  const dispatch: AppDispatch = useDispatch();
+  const ports = useSelector(selectPorts);
   const [region, setRegion] = useState({
     latitude: 25.58627632413783,
     longitude: -109.06027458994723,
@@ -97,6 +101,10 @@ const MapScreen: React.FC = () => {
   const [selectedRating, setSelectedRating] = useState(0);
 
   useEffect(() => {
+    dispatch(getActivePorts());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (mapRef.current) {
       mapRef.current.fitToCoordinates(
         locations.map((location) => ({
@@ -118,7 +126,7 @@ const MapScreen: React.FC = () => {
       const panelHeight = Dimensions.get("window").height / 2;
       const latitudeOffset =
         (region.latitudeDelta * (panelHeight - 500)) /
-        Dimensions.get("window").height; // Add extra offset for higher positioning
+        Dimensions.get("window").height;
 
       const newRegion = {
         ...region,
@@ -129,26 +137,6 @@ const MapScreen: React.FC = () => {
       mapRef.current.animateToRegion(newRegion, 500);
     }
   }, [selectedLocation]);
-
-  const zoomIn = () => {
-    const newRegion = {
-      ...region,
-      latitudeDelta: region.latitudeDelta / 2,
-      longitudeDelta: region.longitudeDelta / 2,
-    };
-    setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 500);
-  };
-
-  const zoomOut = () => {
-    const newRegion = {
-      ...region,
-      latitudeDelta: region.latitudeDelta * 2,
-      longitudeDelta: region.longitudeDelta * 2,
-    };
-    setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 500);
-  };
 
   const getMarkerIcon = (type: string) => {
     switch (type) {

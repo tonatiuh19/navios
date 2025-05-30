@@ -37,7 +37,6 @@ function InnerRootLayout() {
   const { t } = useTranslation(); // Use the translation hook
 
   const handleRetry = () => {
-    console.log("Retrying...");
     const state = navigation.getState();
     const mainScreenExists = state?.routeNames?.includes("Main");
     dispatch(clearState());
@@ -48,7 +47,6 @@ function InnerRootLayout() {
         })
       );
     } else {
-      console.log("Main screen doesn't exist, navigating to Login");
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

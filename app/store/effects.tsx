@@ -18,6 +18,9 @@ import {
   logoutStart,
   logoutSuccess,
   logoutFailure,
+  getActivePortsStart,
+  getActivePortsSuccess,
+  getActivePortsFailure,
 } from "./appSlice";
 import { DOMAIN } from "../app.model";
 
@@ -26,6 +29,7 @@ const VALIDATE_USER_BY_EMAIL = `${DOMAIN}/validateUserByEmail.php`;
 const SEND_CODE_BY_MAIL = `${DOMAIN}/sendCodeByMail.php`;
 const VALIDATE_SESSION_CODE = `${DOMAIN}/validateSessionCode.php`;
 const LOGOUT = `${DOMAIN}/logout.php`;
+const GET_ACTIVE_PORTS = `${DOMAIN}/getActivePorts.php`;
 
 export const insertUser =
   (
@@ -148,5 +152,26 @@ export const logout =
     } catch (error) {
       console.log("Error", error);
       dispatch(logoutFailure());
+    }
+  };
+
+export const getActivePorts =
+  () =>
+  async (
+    dispatch: (arg0: {
+      payload: any;
+      type:
+        | "app/getActivePortsStart"
+        | "app/getActivePortsSuccess"
+        | "app/getActivePortsFailure";
+    }) => void
+  ) => {
+    try {
+      dispatch(getActivePortsStart());
+      const response = await axios.post<any>(GET_ACTIVE_PORTS, {});
+      dispatch(getActivePortsSuccess(response.data));
+    } catch (error) {
+      console.log("Error", error);
+      dispatch(getActivePortsFailure());
     }
   };

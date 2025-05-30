@@ -26,11 +26,9 @@ const AppNavigator = () => {
     const checkUserSession = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem("navios_user_id");
-        console.log("Stored user id", storedUserId);
         if (storedUserId !== "0" && storedUserId !== null) {
           setIsAuthenticated(true);
         } else {
-          console.log("Validating user session", storedUserId);
           setIsAuthenticated(false);
         }
       } catch (error) {

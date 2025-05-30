@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppState, UserInfo } from "../app.model";
+import { AppState, PortsModel, UserInfo } from "../app.model";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const initialState: AppState = {
@@ -23,6 +23,7 @@ const initialState: AppState = {
       navios_user_active: 0,
     } as UserInfo,
   },
+  ports: [],
   isLoading: false,
   isError: false,
 };
@@ -45,7 +46,7 @@ const appSlice = createSlice({
       state.isLoading = true;
       state.isError = false;
     },
-    insertUserSuccess(state, action: PayloadAction<any>) {
+    insertUserSuccess(state, action: PayloadAction<UserInfo>) {
       state.userInfo.info = action.payload;
       state.userInfo.isUserExist = true;
       state.isLoading = false;
@@ -64,7 +65,7 @@ const appSlice = createSlice({
       state.isLoading = true;
       state.isError = false;
     },
-    validateUserByEmailSuccess(state, action: PayloadAction<any>) {
+    validateUserByEmailSuccess(state, action: PayloadAction<UserInfo>) {
       if (!action.payload) {
         state.userInfo.isUserExist = action.payload;
       } else {
@@ -97,7 +98,6 @@ const appSlice = createSlice({
       state.isError = false;
     },
     validateSessionCodeSuccess(state, action: PayloadAction<boolean>) {
-      console.log("Validate Session Code", action.payload);
       if (action.payload) {
         AsyncStorage.setItem(
           "navios_user_id",
@@ -125,6 +125,18 @@ const appSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
     },
+    getActivePortsStart(state) {
+      state.isLoading = true;
+      state.isError = false;
+    },
+    getActivePortsSuccess(state, action: PayloadAction<PortsModel[]>) {
+      state.ports = action.payload;
+      state.isLoading = false;
+    },
+    getActivePortsFailure(state) {
+      state.isLoading = false;
+      state.isError = true;
+    },
   },
 });
 
@@ -147,6 +159,9 @@ export const {
   logoutStart,
   logoutSuccess,
   logoutFailure,
+  getActivePortsStart,
+  getActivePortsSuccess,
+  getActivePortsFailure,
 } = appSlice.actions;
 
 export default appSlice.reducer;

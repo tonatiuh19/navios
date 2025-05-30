@@ -21,7 +21,6 @@ const ProfileScreen = () => {
 
   const handleLogout = async () => {
     try {
-      console.log("Logging out user", userInfo.info);
       await AsyncStorage.removeItem("navios_user_id");
       const value = await AsyncStorage.getItem("navios_user_id");
       console.log("Value after removal:", value); // Should be null
