@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, Animated, Easing } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LoadingMaskStyles } from "./LoadingMask.style";
 
 interface LoadingMaskProps {
@@ -39,7 +39,7 @@ const LoadingMask: React.FC<LoadingMaskProps> = ({ isLoading }) => {
   return (
     <View style={LoadingMaskStyles.overlay}>
       <Animated.View style={{ transform: [{ rotate }] }}>
-        <Ionicons name="tennisball" size={34} color="#f29b7c" />
+        <MaterialCommunityIcons name="ship-wheel" size={34} color="#f29b7c" />
       </Animated.View>
     </View>
   );

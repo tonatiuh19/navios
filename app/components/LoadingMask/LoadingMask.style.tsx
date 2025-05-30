@@ -9,7 +9,7 @@ export const LoadingMaskStyles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
     zIndex: 1000, // Ensure it appears above everything
     elevation: 10, // For Android shadow
   },
