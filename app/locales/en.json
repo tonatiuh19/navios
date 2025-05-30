@@ -17,5 +17,34 @@
   "all": "All",
   "filter_by_rating": "Rating",
   "stars": "Stars",
-  "apply_filters": "Apply Filters"
+  "apply_filters": "Apply Filters",
+  "login": {
+    "invalid_email": "The email address is not valid",
+    "email_required": "Your email address is required",
+    "email_placeholder": "Your email address",
+    "continue": "Continue",
+    "full_name_placeholder": "Full Name",
+    "full_name_required": "Full name is required",
+    "date_of_birth_placeholder": "Date of Birth",
+    "date_of_birth_required": "Date of birth is required",
+    "accept": "Accept",
+    "account_deleted": "Your account has been deleted. Please contact support.",
+    "code": {
+      "instructions": "To ensure your account's security, we will send a six-digit code to your email. Please enter it below:",
+      "send": "Send Code",
+      "back": "Back",
+      "placeholder": "6-digit code",
+      "required": "The code is required",
+      "invalid_format": "The code must be 6 digits",
+      "invalid": "The code is incorrect",
+      "validate": "Validate Code",
+      "resend_instructions": "1:30 minutes to resend a new code",
+      "resend": "Resend Code",
+      "check_spam": "Check your spam folder if you can't find the email",
+      "terms_prefix": "By registering or logging in, you accept our",
+      "terms": "Terms and Conditions",
+      "and": "and",
+      "privacy": "Privacy Policy"
+    }
+  }
 }

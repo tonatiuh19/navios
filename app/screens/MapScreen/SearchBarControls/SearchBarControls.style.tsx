@@ -68,4 +68,11 @@ export const SearchBarControlsStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  searchBarWrapperFocused: {
+    height: 60, // Increase height when focused
+    backgroundColor: "#123456", // Optional: Change background color
+  },
+  searchBarFocused: {
+    fontSize: 18, // Optional: Increase font size when focused
+  },
 });

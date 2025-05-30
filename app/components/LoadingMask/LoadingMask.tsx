@@ -39,7 +39,7 @@ const LoadingMask: React.FC<LoadingMaskProps> = ({ isLoading }) => {
   return (
     <View style={LoadingMaskStyles.overlay}>
       <Animated.View style={{ transform: [{ rotate }] }}>
-        <Ionicons name="tennisball" size={34} color="#e1dd2a" />
+        <Ionicons name="tennisball" size={34} color="#f29b7c" />
       </Animated.View>
     </View>
   );

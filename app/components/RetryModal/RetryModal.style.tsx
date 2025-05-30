@@ -30,7 +30,7 @@ export const RetryModalStyles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 10,
     padding: 10,
-    backgroundColor: "#e1dd2a",
+    backgroundColor: "#f29b7c",
     borderRadius: 22,
     alignItems: "center",
   },

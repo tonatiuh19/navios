@@ -6,9 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProfileScreen from "@/app/screens/ProfileScreen/ProfileScreen";
-import { AppDispatch } from "../../store";
+import LoginScreen from "@/app/screens/LoginScreen/LoginScreen";
+import { selectUserInfo } from "@/app/store/selectors";
 
 export type RootStackParamList = {
+  Login: undefined;
   Main: undefined;
   Reservations: undefined;
   Profile: undefined;
@@ -17,13 +19,13 @@ export type RootStackParamList = {
 const { Navigator, Screen } = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const userInfo = useSelector(selectUserInfo);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
-  /*useEffect(() => {
+  useEffect(() => {
     const checkUserSession = async () => {
       try {
-        const storedUserId = await AsyncStorage.getItem("id_platforms_user");
+        const storedUserId = await AsyncStorage.getItem("navios_user_id");
         console.log("Stored user id", storedUserId);
         if (storedUserId !== "0" && storedUserId !== null) {
           setIsAuthenticated(true);
@@ -37,7 +39,7 @@ const AppNavigator = () => {
     };
 
     checkUserSession();
-  }, [userInfo]);*/
+  }, [userInfo]);
 
   return (
     <Navigator>
@@ -57,7 +59,7 @@ const AppNavigator = () => {
                 fontSize: 30,
                 fontFamily: "Kanit-Regular",
                 fontWeight: "bold",
-                color: "#000", // Customize the color
+                color: "#000",
               },
               headerLeft: () => (
                 <BackButton onPress={() => navigation.goBack()} />
@@ -65,7 +67,13 @@ const AppNavigator = () => {
             })}
           />
         </>
-      ) : null}
+      ) : (
+        <Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+      )}
     </Navigator>
   );
 };

@@ -32,6 +32,7 @@ const SearchBarControls: React.FC<SearchBarControlsProps> = ({
   onApplyFilters,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
 
   const toggleFilters = () => {
@@ -46,9 +47,19 @@ const SearchBarControls: React.FC<SearchBarControlsProps> = ({
   return (
     <View>
       {/* Search Bar */}
-      <View style={SearchBarControlsStyles.topControlsContainer}>
+      <View
+        style={[
+          SearchBarControlsStyles.topControlsContainer,
+          //isFocused && SearchBarControlsStyles.searchBarFocused, // Apply focused style
+        ]}
+      >
         <View style={SearchBarControlsStyles.profileButtonSpacer} />
-        <View style={SearchBarControlsStyles.searchBarWrapper}>
+        <View
+          style={[
+            SearchBarControlsStyles.searchBarWrapper,
+            isFocused && SearchBarControlsStyles.searchBarWrapperFocused, // Apply focused style
+          ]}
+        >
           <FontAwesome5
             name="search"
             size={16}
@@ -60,6 +71,8 @@ const SearchBarControls: React.FC<SearchBarControlsProps> = ({
             placeholderTextColor="#fff"
             value={searchQuery}
             onChangeText={onSearchChange}
+            onFocus={() => setIsFocused(true)} // Set focus state to true
+            onBlur={() => setIsFocused(false)}
           />
           <TouchableOpacity
             style={SearchBarControlsStyles.filterButton}

@@ -17,5 +17,34 @@
   "all": "Todos",
   "filter_by_rating": "Filtrar por calificación",
   "stars": "Estrellas",
-  "apply_filters": "Aplicar filtros"
+  "apply_filters": "Aplicar filtros",
+  "login": {
+    "invalid_email": "El Correo electrónico no es válido",
+    "email_required": "Tu Correo electrónico es requerido",
+    "email_placeholder": "Tu correo electrónico",
+    "continue": "Continuar",
+    "full_name_placeholder": "Nombre Completo",
+    "full_name_required": "Nombre completo es requerido",
+    "date_of_birth_placeholder": "Fecha de Nacimiento",
+    "date_of_birth_required": "Fecha de nacimiento es requerida",
+    "accept": "Aceptar",
+    "account_deleted": "Tu cuenta ha sido eliminada. Por favor, contacta a soporte.",
+    "code": {
+      "instructions": "Para garantizar la seguridad de tu cuenta, enviaremos un código de seis dígitos a tu correo. Insértalo a continuación:",
+      "send": "Enviar Código",
+      "back": "Volver",
+      "placeholder": "Código de 6 dígitos",
+      "required": "El código es requerido",
+      "invalid_format": "El código debe tener 6 dígitos",
+      "invalid": "El código es incorrecto",
+      "validate": "Validar Código",
+      "resend_instructions": "1:30 minutos para reenviar nuevo código",
+      "resend": "Reenviar Código",
+      "check_spam": "Revisa tu carpeta de spam si no encuentras el correo",
+      "terms_prefix": "Al registrarte o iniciar sesión, aceptas nuestros",
+      "terms": "Términos y Condiciones",
+      "and": "y",
+      "privacy": "Política de Privacidad"
+    }
+  }
 }
