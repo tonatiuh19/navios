@@ -65,7 +65,9 @@ const LoginForm: React.FC<any> = ({ handleLogin }) => {
               style={LoginScreenStyles.phoneInput}
               placeholder={t("login.email_placeholder")}
               placeholderTextColor="#f29b7c"
-              onChangeText={(text) => handleChange("email")(text.toLowerCase())}
+              onChangeText={(text) =>
+                handleChange("email")(text.replace(/\s/g, "").toLowerCase())
+              }
               onBlur={handleBlur("email")}
               value={values.email}
               keyboardType="email-address"

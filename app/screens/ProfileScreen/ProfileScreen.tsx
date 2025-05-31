@@ -22,10 +22,8 @@ const ProfileScreen = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("navios_user_id");
-      const value = await AsyncStorage.getItem("navios_user_id");
-      console.log("Value after removal:", value); // Should be null
       dispatch(logout(userInfo.info?.navios_user_id));
-      navigation.navigate("Main");
+      // Do NOT navigate manually here!
     } catch (error) {
       console.error("Logout error:", error);
     }
