@@ -6,8 +6,8 @@ import { FilterPanelStyles } from "./FilterPanel.style";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 
 interface FilterPanelProps {
-  selectedType: string;
-  onTypeChange: (type: string) => void;
+  selectedType: number;
+  onTypeChange: (type: number) => void;
   selectedRating: number;
   onRatingChange: (rating: number) => void;
   onClose: () => void;
@@ -30,15 +30,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         <TouchableOpacity
           style={[
             FilterPanelStyles.filterOption,
-            selectedType === "industrial" && FilterPanelStyles.selectedOption,
+            selectedType === 1 && FilterPanelStyles.selectedOption,
           ]}
-          onPress={() => onTypeChange("industrial")}
+          onPress={() => onTypeChange(1)}
         >
           <Text
             style={[
               FilterPanelStyles.filterOptionText,
-              selectedType === "industrial" &&
-                FilterPanelStyles.selectedOptionText,
+              selectedType === 1 && FilterPanelStyles.selectedOptionText,
             ]}
           >
             {t("industrial")}
@@ -47,15 +46,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         <TouchableOpacity
           style={[
             FilterPanelStyles.filterOption,
-            selectedType === "touristic" && FilterPanelStyles.selectedOption,
+            selectedType === 2 && FilterPanelStyles.selectedOption,
           ]}
-          onPress={() => onTypeChange("touristic")}
+          onPress={() => onTypeChange(2)}
         >
           <Text
             style={[
               FilterPanelStyles.filterOptionText,
-              selectedType === "touristic" &&
-                FilterPanelStyles.selectedOptionText,
+              selectedType === 2 && FilterPanelStyles.selectedOptionText,
             ]}
           >
             {t("touristic")}
@@ -64,14 +62,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         <TouchableOpacity
           style={[
             FilterPanelStyles.filterOption,
-            selectedType === "" && FilterPanelStyles.selectedOption,
+            selectedType === 0 && FilterPanelStyles.selectedOption,
           ]}
-          onPress={() => onTypeChange("")}
+          onPress={() => onTypeChange(0)}
         >
           <Text
             style={[
               FilterPanelStyles.filterOptionText,
-              selectedType === "" && FilterPanelStyles.selectedOptionText,
+              selectedType === 0 && FilterPanelStyles.selectedOptionText,
             ]}
           >
             {t("all")}
@@ -79,7 +77,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Filter by Rating */}
+      {/* Filter by Rating 
       <Text style={FilterPanelStyles.sectionTitle}>
         {t("filter_by_rating")}
       </Text>
@@ -96,7 +94,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       />
       <Text style={FilterPanelStyles.sliderValue}>
         {selectedRating} {t("stars")}
-      </Text>
+      </Text>*/}
 
       {/* Buttons Row */}
       <View style={FilterPanelStyles.buttonsRow}>

@@ -52,7 +52,7 @@ const MapScreen: React.FC = () => {
   );
   const [previousRegion, setPreviousRegion] = useState(region);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
   const [showSearchHere, setShowSearchHere] = useState(false);
   const [currentRegion, setCurrentRegion] = useState(region);
@@ -172,10 +172,30 @@ const MapScreen: React.FC = () => {
 
   const resetSearchAndFilters = useCallback(() => {
     setSearchQuery("");
-    setSelectedFilter("");
+    setSelectedFilter(0);
     setSelectedRating(0);
     Keyboard.dismiss();
   }, []);
+
+  const applyFilters = () => {
+    console.log("Applying filters:", selectedFilter);
+    if (selectedFilter === 0) {
+      dispatch(getActivePorts(getBoundingBox({ coords: currentRegion })));
+    } else {
+      dispatch(
+        getActivePorts(
+          {
+            lat_min: currentRegion.latitude - currentRegion.latitudeDelta / 2,
+            lat_max: currentRegion.latitude + currentRegion.latitudeDelta / 2,
+            lng_min: currentRegion.longitude - currentRegion.longitudeDelta / 2,
+            lng_max: currentRegion.longitude + currentRegion.longitudeDelta / 2,
+          },
+          undefined, // navios_port_title
+          selectedFilter // navios_port_type)
+        )
+      );
+    }
+  };
 
   const regionsAreEqual = (
     r1: Region,
@@ -205,7 +225,7 @@ const MapScreen: React.FC = () => {
           onFilterChange={setSelectedFilter}
           selectedRating={selectedRating}
           onRatingChange={setSelectedRating}
-          onApplyFilters={() => {}} // Implement as needed
+          onApplyFilters={applyFilters}
         />
         {showSearchHere && (
           <View style={MapScreenStyles.searchHereContainer}>

@@ -20,8 +20,8 @@ import { Dimensions } from "react-native";
 interface SearchBarControlsProps {
   searchQuery: string;
   onSearchChange: (query: any) => void;
-  selectedFilter: string;
-  onFilterChange: (filter: string) => void;
+  selectedFilter: number;
+  onFilterChange: (filter: number) => void;
   selectedRating: number;
   onRatingChange: (rating: number) => void;
   onApplyFilters: () => void;

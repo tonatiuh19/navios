@@ -178,7 +178,6 @@ export const getActivePorts =
   ) => {
     try {
       dispatch(getActivePortsStart());
-      // Build request body dynamically
       const body: any = { location };
       if (navios_port_title !== undefined)
         body.navios_port_title = navios_port_title;
