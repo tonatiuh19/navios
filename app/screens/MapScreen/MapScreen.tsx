@@ -18,8 +18,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectPorts } from "@/app/store/selectors";
 import { getActivePorts } from "@/app/store/effects";
 import { AppDispatch } from "@/app/store";
+import * as Location from "expo-location";
+import { PortsModel } from "@/app/app.model";
+import { parsePrice } from "@/app/utils/functions/UtilsFunctions";
 
-const locations = [
+/*const locations = [
   {
     id: 1,
     latitude: 25.583386113924508,
@@ -70,7 +73,7 @@ const locations = [
     price: "$350",
     rating: 3.0,
   },
-];
+];*/
 
 const MapScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -84,32 +87,52 @@ const MapScreen: React.FC = () => {
     longitudeDelta: 0.0221,
   });
 
-  const [filteredLocations, setFilteredLocations] = useState(locations);
-  const [selectedLocation, setSelectedLocation] = useState<{
-    id: number;
-    latitude: number;
-    longitude: number;
-    title: string;
-    description: string;
-    type: string;
-    price: string;
-    rating: number;
-  } | null>(null); // Track the selected marker
+  //const [filteredLocations, setFilteredLocations] = useState(locations);
+  const [selectedLocation, setSelectedLocation] = useState<PortsModel | null>(
+    null
+  ); // Track the selected marker
   const [previousRegion, setPreviousRegion] = useState(region);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [selectedRating, setSelectedRating] = useState(0);
 
   useEffect(() => {
-    dispatch(getActivePorts());
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === "granted") {
+        let location = await Location.getCurrentPositionAsync({});
+        console.log("Current location:", getBoundingBox(location));
+        dispatch(getActivePorts(getBoundingBox(location)));
+        setRegion((prev) => ({
+          ...prev,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        }));
+        if (mapRef.current) {
+          mapRef.current.animateToRegion(
+            {
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: region.latitudeDelta,
+              longitudeDelta: region.longitudeDelta,
+            },
+            500
+          );
+        }
+      }
+    })();
   }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Ports updated:", ports);
+  }, [ports]);
 
   useEffect(() => {
     if (mapRef.current) {
       mapRef.current.fitToCoordinates(
-        locations.map((location) => ({
-          latitude: location.latitude,
-          longitude: location.longitude,
+        ports.map((location) => ({
+          latitude: Number(location.navios_port_latitude),
+          longitude: Number(location.navios_port_longitude),
         })),
         {
           edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
@@ -130,19 +153,20 @@ const MapScreen: React.FC = () => {
 
       const newRegion = {
         ...region,
-        latitude: selectedLocation.latitude + latitudeOffset,
-        longitude: selectedLocation.longitude,
+        latitude:
+          Number(selectedLocation.navios_port_latitude) + latitudeOffset,
+        longitude: Number(selectedLocation.navios_port_longitude),
       };
 
       mapRef.current.animateToRegion(newRegion, 500);
     }
   }, [selectedLocation]);
 
-  const getMarkerIcon = (type: string) => {
+  const getMarkerIcon = (type: number) => {
     switch (type) {
-      case "industrial":
+      case 1:
         return require("../../../assets/icons/industrial.png");
-      case "touristic":
+      case 2:
         return require("../../../assets/icons/touristic.png");
       default:
         return require("../../../assets/icons/touristic.png");
@@ -150,7 +174,8 @@ const MapScreen: React.FC = () => {
   };
 
   const applyFilters = () => {
-    let filtered = locations;
+    console.log("Applying filters:");
+    /* let filtered = locations;
 
     if (selectedFilter) {
       filtered = filtered.filter(
@@ -164,21 +189,56 @@ const MapScreen: React.FC = () => {
       );
     }
 
-    setFilteredLocations(filtered);
+    setFilteredLocations(filtered);*/
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    if (query.trim() === "") {
-      // If the search bar is empty, reset to all locations
-      setFilteredLocations(locations);
-    } else {
-      // Filter locations based on the search query
-      setFilteredLocations(
-        locations.filter((location) =>
-          location.title.toLowerCase().includes(query.toLowerCase())
-        )
+  const getBoundingBox = (location: {
+    coords: { latitude: any; longitude: any };
+  }) => {
+    const lat = location.coords.latitude;
+    const lng = location.coords.longitude;
+    const delta = 0.05; // ~5km, adjust as needed
+
+    return {
+      lat_min: lat - delta,
+      lat_max: lat + delta,
+      lng_min: lng - delta,
+      lng_max: lng + delta,
+    };
+  };
+
+  const handleSearch = (query: any) => {
+    console.log("Search query:", query);
+    //dispatch(getActivePorts(getBoundingBox(query)));
+    if (query && query.location) {
+      const { lat_min, lat_max, lng_min, lng_max } = query.location;
+      dispatch(
+        getActivePorts({
+          lat_min,
+          lat_max,
+          lng_min,
+          lng_max,
+        })
       );
+      const latitude = (lat_min + lat_max) / 2;
+      const longitude = (lng_min + lng_max) / 2;
+      const latitudeDelta = Math.abs(lat_max - lat_min) * 1.2; // Add some padding
+      const longitudeDelta = Math.abs(lng_max - lng_min) * 1.2;
+
+      const newRegion = {
+        latitude,
+        longitude,
+        latitudeDelta: latitudeDelta || 0.05,
+        longitudeDelta: longitudeDelta || 0.05,
+      };
+
+      setRegion(newRegion);
+
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(newRegion, 500);
+      }
+      // Optionally, filter your locations here if needed
+      return;
     }
   };
 
@@ -202,7 +262,6 @@ const MapScreen: React.FC = () => {
     setSearchQuery("");
     setSelectedFilter("");
     setSelectedRating(0);
-    setFilteredLocations(locations);
     Keyboard.dismiss(); // Dismiss the keyboard
   };
 
@@ -229,32 +288,34 @@ const MapScreen: React.FC = () => {
           style={MapScreenStyles.map}
           initialRegion={region}
         >
-          {filteredLocations
+          {ports
             .filter(
               (location) =>
-                !selectedLocation || location.id === selectedLocation.id
+                !selectedLocation ||
+                location.navios_port_id === selectedLocation.navios_port_id
             ) // Show all markers if no marker is selected
             .map((location) => (
               <Marker
-                key={location.id}
+                key={location.navios_port_id}
                 coordinate={{
-                  latitude: location.latitude,
-                  longitude: location.longitude,
+                  latitude: Number(location.navios_port_latitude),
+                  longitude: Number(location.navios_port_longitude),
                 }}
                 onPress={() => handleMarkerPress(location)} // Handle marker press
               >
                 <View style={MapScreenStyles.priceLabelContainer}>
                   <Text style={MapScreenStyles.priceLabelText}>
-                    {location.price}
+                    {parsePrice(location.navios_port_price)}
                   </Text>
                   <View style={MapScreenStyles.priceLabelTriangle} />
                 </View>
                 <View style={MapScreenStyles.markerIconContainer}>
                   <Image
-                    source={getMarkerIcon(location.type)}
+                    source={getMarkerIcon(location.navios_port_type)}
                     style={[
                       MapScreenStyles.markerIcon,
-                      selectedLocation?.id === location.id &&
+                      selectedLocation?.navios_port_id ===
+                        location.navios_port_id &&
                         MapScreenStyles.selectedMarkerIcon, // Apply additional styles if selected
                     ]}
                   />

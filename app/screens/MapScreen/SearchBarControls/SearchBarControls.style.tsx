@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const SearchBarControlsStyles = StyleSheet.create({
   topControlsContainer: {
     position: "absolute",
-    top: 52, // Adjust for the notch
+    top: 56.5, // Adjust for the notch
     left: 10,
     right: 10,
     flexDirection: "row-reverse", // Profile button on the right

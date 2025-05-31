@@ -33,12 +33,20 @@ export interface UserInfo {
 }
 
 export interface PortsModel {
-  navios_port_id: string;
+  navios_port_id: number;
   navios_port_title: string;
+  navios_port_price: string;
   navios_port_description: string;
-  navios_port_type: string;
+  navios_port_type: number;
   navios_port_latitude: string;
   navios_port_longitude: string;
-  navios_port_active: string;
+  navios_port_active: number;
   navios_port_type_title: string;
+  average_rating: string;
+  comments: CommentModel[];
+}
+
+export interface CommentModel {
+  comment: string;
+  created: string;
 }

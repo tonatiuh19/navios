@@ -3,15 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import ReservationButton from "../ReservationButton/ReservationButton";
 import { LocationDetailsModalStyles } from "./LocationDetailsModal.style";
 import StarRating from "./StarRating/StarRating";
+import { PortsModel } from "@/app/app.model";
+import { parsePrice } from "@/app/utils/functions/UtilsFunctions";
 
 interface LocationDetailsContentProps {
-  selectedLocation: {
-    id: number;
-    title: string;
-    description: string;
-    price: string;
-    rating: number;
-  };
+  selectedLocation: PortsModel;
   onClose: () => void;
   onReserve: (locationTitle: string) => void;
 }
@@ -24,19 +20,19 @@ const LocationDetailsModal: React.FC<LocationDetailsContentProps> = ({
   return (
     <View style={LocationDetailsModalStyles.modalContent}>
       <Text style={LocationDetailsModalStyles.popupTitle}>
-        {selectedLocation.title}
+        {selectedLocation.navios_port_title}
       </Text>
       <Text style={LocationDetailsModalStyles.popupDescription}>
-        {selectedLocation.description}
+        {selectedLocation.navios_port_description}
       </Text>
       <Text style={LocationDetailsModalStyles.popupPrice}>
-        Price: {selectedLocation.price}
+        Price: {parsePrice(selectedLocation.navios_port_price)}
       </Text>
-      <StarRating rating={selectedLocation.rating} />
+      <StarRating rating={Number(selectedLocation.average_rating)} />
       <ReservationButton
         title="Reserve"
-        price={selectedLocation.price}
-        onPress={() => onReserve(selectedLocation.title)}
+        price={parsePrice(selectedLocation.navios_port_price)}
+        onPress={() => onReserve(selectedLocation.navios_port_title)}
       />
       <TouchableOpacity onPress={onClose}>
         <Text style={LocationDetailsModalStyles.popupClose}>Close</Text>

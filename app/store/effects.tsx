@@ -156,7 +156,17 @@ export const logout =
   };
 
 export const getActivePorts =
-  () =>
+  (
+    location: {
+      lat_min: number;
+      lat_max: number;
+      lng_min: number;
+      lng_max: number;
+    },
+    navios_port_title?: string,
+    navios_port_type?: number,
+    average_rating?: number
+  ) =>
   async (
     dispatch: (arg0: {
       payload: any;
@@ -168,7 +178,15 @@ export const getActivePorts =
   ) => {
     try {
       dispatch(getActivePortsStart());
-      const response = await axios.post<any>(GET_ACTIVE_PORTS, {});
+      // Build request body dynamically
+      const body: any = { location };
+      if (navios_port_title !== undefined)
+        body.navios_port_title = navios_port_title;
+      if (navios_port_type !== undefined)
+        body.navios_port_type = navios_port_type;
+      if (average_rating !== undefined) body.average_rating = average_rating;
+
+      const response = await axios.post<any>(GET_ACTIVE_PORTS, body);
       dispatch(getActivePortsSuccess(response.data));
     } catch (error) {
       console.log("Error", error);

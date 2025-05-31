@@ -8,3 +8,13 @@ export const formatDate = (date: Date): string => {
   const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
   return localDate.toLocaleDateString("es-MX", options);
 };
+
+export const parsePrice = (price: string | number): string => {
+  const num = typeof price === "number" ? price : parseFloat(price);
+  if (isNaN(num)) return "$0";
+  return num.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
+};
