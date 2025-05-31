@@ -18,6 +18,7 @@
   "filter_by_rating": "Filtrar por calificación",
   "stars": "Estrellas",
   "apply_filters": "Aplicar filtros",
+  "search_here": "Buscar aquí",
   "login": {
     "invalid_email": "El Correo electrónico no es válido",
     "email_required": "Tu Correo electrónico es requerido",

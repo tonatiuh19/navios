@@ -71,6 +71,8 @@ const LoginForm: React.FC<any> = ({ handleLogin }) => {
               onBlur={handleBlur("email")}
               value={values.email}
               keyboardType="email-address"
+              autoCorrect={false}
+              autoCapitalize="none"
             />
           </View>
           {errors.email && touched.email && (

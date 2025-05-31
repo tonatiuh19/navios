@@ -18,6 +18,7 @@
   "filter_by_rating": "Rating",
   "stars": "Stars",
   "apply_filters": "Apply Filters",
+  "search_here": "Search here",
   "login": {
     "invalid_email": "The email address is not valid",
     "email_required": "Your email address is required",

@@ -5,10 +5,9 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Keyboard,
-  Image,
   Text,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Region } from "react-native-maps";
 import { MapScreenStyles } from "./MapScreen.style";
 import { useTranslation } from "react-i18next";
 import LocationDetailsModal from "./LocationDetailsModal/LocationDetailsModal";
@@ -19,8 +18,8 @@ import { getActivePorts } from "@/app/store/effects";
 import { AppDispatch } from "@/app/store";
 import * as Location from "expo-location";
 import { PortsModel } from "@/app/app.model";
-import { parsePrice } from "@/app/utils/functions/UtilsFunctions";
 import MarkerItem from "./MarkerItem/MarkerItem";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const getBoundingBox = (location: {
   coords: { latitude: number; longitude: number };
@@ -55,6 +54,8 @@ const MapScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [selectedRating, setSelectedRating] = useState(0);
+  const [showSearchHere, setShowSearchHere] = useState(false);
+  const [currentRegion, setCurrentRegion] = useState(region);
 
   // Get user location and fetch ports
   useEffect(() => {
@@ -176,6 +177,24 @@ const MapScreen: React.FC = () => {
     Keyboard.dismiss();
   }, []);
 
+  const regionsAreEqual = (
+    r1: Region,
+    r2: {
+      latitude: any;
+      longitude: any;
+      latitudeDelta: any;
+      longitudeDelta: any;
+    },
+    threshold = 0.0001
+  ) => {
+    return (
+      Math.abs(r1.latitude - r2.latitude) < threshold &&
+      Math.abs(r1.longitude - r2.longitude) < threshold &&
+      Math.abs(r1.latitudeDelta - r2.latitudeDelta) < threshold &&
+      Math.abs(r1.longitudeDelta - r2.longitudeDelta) < threshold
+    );
+  };
+
   return (
     <TouchableWithoutFeedback onPress={resetSearchAndFilters}>
       <View style={MapScreenStyles.container}>
@@ -188,10 +207,49 @@ const MapScreen: React.FC = () => {
           onRatingChange={setSelectedRating}
           onApplyFilters={() => {}} // Implement as needed
         />
+        {showSearchHere && (
+          <View style={MapScreenStyles.searchHereContainer}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                const delta =
+                  Math.max(
+                    currentRegion.latitudeDelta,
+                    currentRegion.longitudeDelta
+                  ) / 2;
+                const boundingBox = {
+                  lat_min: currentRegion.latitude - delta,
+                  lat_max: currentRegion.latitude + delta,
+                  lng_min: currentRegion.longitude - delta,
+                  lng_max: currentRegion.longitude + delta,
+                };
+                dispatch(getActivePorts(boundingBox));
+                setShowSearchHere(false);
+              }}
+            >
+              <View style={MapScreenStyles.searchHereContent}>
+                <FontAwesome5
+                  name="search"
+                  size={16}
+                  color="#f29b7c"
+                  style={MapScreenStyles.searchIcon}
+                />
+                <Text style={MapScreenStyles.searchHereText}>
+                  {t("search_here")}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        )}
         <MapView
           ref={mapRef}
           style={MapScreenStyles.map}
           initialRegion={region}
+          onRegionChangeComplete={(newRegion) => {
+            if (!regionsAreEqual(newRegion, region)) {
+              setCurrentRegion(newRegion);
+              setShowSearchHere(true);
+            }
+          }}
         >
           {ports
             .filter(
